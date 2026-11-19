@@ -6,16 +6,24 @@ variable "environment" {
   default = "demo"
 }
 
+locals {
+  env = coalesce(var.environment, "unknown")
+}
+
 resource "aws_s3_bucket" "data" {
   bucket_prefix = "orbit-labs-"
 
   tags = {
     name        = "Orbit Labs Storage"
     managedBy   = "Spacelift"
-    environment = var.environment
+    environment = local.env
   }
 }
 
 output "bucket_name" {
   value = aws_s3_bucket.data.id
+}
+
+output "deploy_env" {
+  value = local.env
 }
